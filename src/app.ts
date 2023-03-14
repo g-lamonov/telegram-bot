@@ -1,5 +1,7 @@
-import { session, Telegraf } from "telegraf";
-import { Command } from "./commands/command.class";
+import { Telegraf } from "telegraf";
+import LocalSession from "telegraf-session-local";
+import { Command } from "./commands/abstract.command";
+import { StartCommand } from "./commands/start.command";
 import { ConfigService } from "./config/config.service";
 import { IBotContext } from "./context/context.interface";
 
@@ -9,14 +11,23 @@ class Bot {
 
   constructor(private readonly configService: ConfigService) {
     this._bot = new Telegraf<IBotContext>(this.configService.get('TELEGRAM_TOKEN'));
-    this._bot.use(session());
+    this._bot.use(
+      new LocalSession({
+        database: 'sessions.json'
+      }).middleware()
+    );
   }
 
   public init() {
+    this._commands = [
+      new StartCommand(this._bot)
+    ];
+
     for (const command of this._commands)
       command.handle();
 
     this._bot.launch();
+    console.log('Bot started!');
   }
 }
 

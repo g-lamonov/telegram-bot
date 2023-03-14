@@ -1,7 +1,7 @@
 import { Context } from "telegraf";
 
 export interface SessionData {
-  courseLike: boolean;
+  like: boolean;
 }
 
 export interface IBotContext extends Context {
