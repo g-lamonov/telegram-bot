@@ -4,6 +4,7 @@ import { Command } from "./commands/abstract.command";
 import { StartCommand } from "./commands/start.command";
 import { ConfigService } from "./config/config.service";
 import { IBotContext } from "./context/context.interface";
+import { CronService } from "./cron/cron.service";
 
 class Bot {
   private _bot: Telegraf<IBotContext>;
@@ -18,7 +19,9 @@ class Bot {
     );
   }
 
-  public init() {
+  public async init() {
+    new CronService(this._bot).init();
+
     this._commands = [
       new StartCommand(this._bot)
     ];
